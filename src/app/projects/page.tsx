@@ -8,12 +8,15 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import Link from "next/link";
 import { IProject } from "@/types/Project";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store";
+import { showSnackbar } from "@/store/slices/snackbarSlice";
 
 
 export default function ProjectListPage() {
   const [projects, setProjects] = useState<IProject[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const dispatch = useDispatch<AppDispatch>();
   const fetchData = async () => {
     try {
       const res = await fetch("/api/projects");
@@ -22,6 +25,7 @@ export default function ProjectListPage() {
       setProjects(data);
     } catch (error) {
       console.error("Fetch error:", error);
+      dispatch(showSnackbar({message: error as string, severity:"error"}))
     }
   }
 
@@ -33,9 +37,11 @@ export default function ProjectListPage() {
         body: JSON.stringify({ ...project, isFavourite: !project.isFavourite }),
       });
       if (!res.ok) throw new Error("Failed to update project");
+      dispatch(showSnackbar({message: "Updated!", severity:"success"}))
       fetchData();
     } catch (error) {
       console.error("Update error:", error);
+      dispatch(showSnackbar({message: error as string, severity:"error"}))
     }
   };
 

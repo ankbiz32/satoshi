@@ -1,9 +1,9 @@
-// src/app/projects/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton } from "@mui/material";
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import Link from "next/link";
@@ -16,7 +16,10 @@ import { showSnackbar } from "@/store/slices/snackbarSlice";
 export default function ProjectListPage() {
   const [projects, setProjects] = useState<IProject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+
   const fetchData = async () => {
     try {
       const res = await fetch("/api/projects");
@@ -25,7 +28,7 @@ export default function ProjectListPage() {
       setProjects(data);
     } catch (error) {
       console.error("Fetch error:", error);
-      dispatch(showSnackbar({message: error as string, severity:"error"}))
+      dispatch(showSnackbar({ message: error as string, severity: "error" }))
     }
   }
 
@@ -36,12 +39,42 @@ export default function ProjectListPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...project, isFavourite: !project.isFavourite }),
       });
+
       if (!res.ok) throw new Error("Failed to update project");
-      dispatch(showSnackbar({message: "Updated!", severity:"success"}))
+
+      dispatch(showSnackbar({ message: "Updated!", severity: "success" }))
       fetchData();
     } catch (error) {
       console.error("Update error:", error);
-      dispatch(showSnackbar({message: error as string, severity:"error"}))
+      dispatch(showSnackbar({ message: error as string, severity: "error" }))
+    }
+  };
+
+  const handleDeleteClick = (projectId: string) => {
+    setProjectToDelete(projectId);
+    setOpenDialog(true);
+  };
+
+  const cancelDelete = () => {
+    setProjectToDelete(null);
+    setOpenDialog(false);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const res = await fetch(`/api/projects?projectId=${projectToDelete}`, {
+        method: "DELETE"
+      });
+      if (!res.ok) throw new Error("Failed to delete project");
+
+      dispatch(showSnackbar({ message: "Deleted!", severity: "success" }))
+      fetchData();
+    } catch (error) {
+      console.error("Update error:", error);
+      dispatch(showSnackbar({ message: error as string, severity: "error" }))
+    } finally {
+      setProjectToDelete(null);
+      setOpenDialog(false);
     }
   };
 
@@ -76,7 +109,7 @@ export default function ProjectListPage() {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Link href={`/projects/${project.projectId}`}>{project.projectId}</Link>
+                    <Link href={`/projects/${project.projectId}`} className="text-blue-500">{project.projectId}</Link>
                   </TableCell>
                   <TableCell>{project.projectName}</TableCell>
                   <TableCell>{project.startDate}</TableCell>
@@ -92,6 +125,17 @@ export default function ProjectListPage() {
                     >
                       Edit
                     </Button>
+
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="small"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => handleDeleteClick(project.projectId)}
+                      sx={{ ml: 2 }}
+                    >
+                      Delete
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -99,6 +143,18 @@ export default function ProjectListPage() {
           </Table>
         </TableContainer>
       )}
+      <Dialog open={openDialog} onClose={cancelDelete}>
+        <DialogTitle>Confirm your request</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this project?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete}>Cancel</Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </main>
   );
 }

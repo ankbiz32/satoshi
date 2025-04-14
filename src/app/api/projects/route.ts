@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: 'Project created', data: newProject });
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -64,7 +64,7 @@ export async function PUT(req: Request) {
 
     return NextResponse.json({ message: 'Project updated', data: mockProjects[index] });
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

@@ -1,54 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import {
+  Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Paper, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogTitle
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import Link from "next/link";
-import { IProject } from "@/types/Project";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
+import { fetchProjects, selectAllProjects } from "@/store/slices/projectsSlice";
 import { showSnackbar } from "@/store/slices/snackbarSlice";
-
+import { IProject } from "@/types/Project";
+import { AppDispatch } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useToggleFavorite } from "@/hooks/useToggleFavourite";
 
 export default function ProjectListPage() {
-  const [projects, setProjects] = useState<IProject[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const projects: IProject[] = useSelector(selectAllProjects);
+
   const [openDialog, setOpenDialog] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-  const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(true);
+  const toggleFav = useToggleFavorite();
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch("/api/projects");
-      if (!res.ok) throw new Error("Failed to fetch projects");
-      const data = await res.json();
-      setProjects(data);
-    } catch (error) {
-      console.error("Fetch error:", error);
-      dispatch(showSnackbar({ message: error as string, severity: "error" }))
-    }
-  }
-
-  const toggleFav = async (project: IProject) => {
-    try {
-      const res = await fetch("/api/projects", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...project, isFavourite: !project.isFavourite }),
-      });
-
-      if (!res.ok) throw new Error("Failed to update project");
-
-      dispatch(showSnackbar({ message: "Updated!", severity: "success" }))
-      fetchData();
-    } catch (error) {
-      console.error("Update error:", error);
-      dispatch(showSnackbar({ message: error as string, severity: "error" }))
-    }
-  };
+  useEffect(() => {
+    dispatch(fetchProjects()).finally(() => setLoading(false));
+  }, [dispatch]);
 
   const handleDeleteClick = (projectId: string) => {
     setProjectToDelete(projectId);
@@ -63,29 +43,26 @@ export default function ProjectListPage() {
   const confirmDelete = async () => {
     try {
       const res = await fetch(`/api/projects?projectId=${projectToDelete}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete project");
 
-      dispatch(showSnackbar({ message: "Deleted!", severity: "success" }))
-      fetchData();
+      dispatch(showSnackbar({ message: "Deleted!", severity: "success" }));
+      dispatch(fetchProjects());
     } catch (error) {
-      console.error("Update error:", error);
-      dispatch(showSnackbar({ message: error as string, severity: "error" }))
+      console.error("Delete error:", error);
+      dispatch(showSnackbar({ message: error as string, severity: "error" }));
     } finally {
       setProjectToDelete(null);
       setOpenDialog(false);
     }
   };
 
-  useEffect(() => {
-    fetchData().finally(() => setLoading(false));
-  }, []);
-
   return (
     <main className="p-8">
       <Typography variant="h4" gutterBottom>Project List</Typography>
       <Button variant="contained" color="primary" component={Link} href="/projects/new">Create Project</Button>
+
       {loading ? <Typography>Loading projects...</Typography> : (
         <TableContainer component={Paper} className="mt-4">
           <Table>
@@ -109,7 +86,9 @@ export default function ProjectListPage() {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Link href={`/projects/${project.projectId}`} className="text-blue-500">{project.projectId}</Link>
+                    <Link href={`/projects/${project.projectId}`} className="text-blue-500">
+                      {project.projectId}
+                    </Link>
                   </TableCell>
                   <TableCell>{project.projectName}</TableCell>
                   <TableCell>{project.startDate}</TableCell>
@@ -125,7 +104,6 @@ export default function ProjectListPage() {
                     >
                       Edit
                     </Button>
-
                     <Button
                       variant="outlined"
                       color="error"
@@ -143,6 +121,7 @@ export default function ProjectListPage() {
           </Table>
         </TableContainer>
       )}
+
       <Dialog open={openDialog} onClose={cancelDelete}>
         <DialogTitle>Confirm your request</DialogTitle>
         <DialogContent>
@@ -150,11 +129,10 @@ export default function ProjectListPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete}>Cancel</Button>
-          <Button onClick={confirmDelete} color="error" variant="contained">
-            Delete
-          </Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">Delete</Button>
         </DialogActions>
       </Dialog>
     </main>
   );
 }
+

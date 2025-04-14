@@ -1,11 +1,13 @@
 import { useDispatch } from "react-redux";
 import { showSnackbar } from "@/store/slices/snackbarSlice";
 import { IProject } from "@/types/Project";
+import { fetchProjects } from "@/store/slices/projectsSlice";
+import { AppDispatch } from "@/store";
 
 export const useToggleFavorite = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const toggleFav = async (project: IProject, cb: () => void) => {
+  const toggleFav = async (project: IProject) => {
     try {
       const res = await fetch("/api/projects", {
         method: "PUT",
@@ -16,7 +18,7 @@ export const useToggleFavorite = () => {
       if (!res.ok) throw new Error("Failed to update project");
 
       dispatch(showSnackbar({ message: "Updated!", severity: "success" }));
-      cb();
+      dispatch(fetchProjects());
     } catch (error) {
       console.error("Update error:", error);
       dispatch(showSnackbar({ message: error as string, severity: "error" }));

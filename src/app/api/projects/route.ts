@@ -22,7 +22,18 @@ let mockProjects: IProject[] = [
   },
 ];
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function GET() {
+  
+  const fail = Math.random() < 0.2; // 20% chances of mocking failure
+
+  if (fail) {
+    return NextResponse.json({ error: 'Simulated Server Error in GET. Please refresh' }, { status: 500 });
+  }
+
   return NextResponse.json(mockProjects);
 }
 

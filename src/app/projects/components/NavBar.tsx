@@ -41,7 +41,7 @@ export default function Navbar() {
 
   return (
     <>
-      <CustomAppBar>
+      <CustomAppBar position="static">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="h6" component={Link} href="/" sx={{ color: "white", textDecoration: "none" }}>
             Satoshi

@@ -18,7 +18,9 @@ export const useToggleFavorite = () => {
       if (!res.ok) throw new Error("Failed to update project");
 
       dispatch(showSnackbar({ message: "Updated!", severity: "success" }));
-      dispatch(fetchProjects());
+      dispatch(fetchProjects()).unwrap()
+      .catch((error) =>
+        dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
     } catch (error) {
       console.error("Update error:", error);
       dispatch(showSnackbar({ message: error as string, severity: "error" }));

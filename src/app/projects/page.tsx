@@ -28,9 +28,11 @@ export default function ProjectListPage() {
   const toggleFav = useToggleFavorite();
 
   useEffect(() => {
-    dispatch(fetchProjects()).unwrap().catch((error) => 
-      dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" }))).finally(() => setLoading(false));
-  }, [dispatch]);
+    dispatch(fetchProjects()).unwrap()
+      .catch((error) =>
+        dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleDeleteClick = (projectId: string) => {
     setProjectToDelete(projectId);
@@ -50,7 +52,9 @@ export default function ProjectListPage() {
       if (!res.ok) throw new Error("Failed to delete project");
 
       dispatch(showSnackbar({ message: "Deleted!", severity: "success" }));
-      dispatch(fetchProjects());
+      dispatch(fetchProjects()).unwrap()
+      .catch((error) =>
+        dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
     } catch (error) {
       console.error("Delete error:", error);
       dispatch(showSnackbar({ message: error as string, severity: "error" }));

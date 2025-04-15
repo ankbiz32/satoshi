@@ -19,8 +19,8 @@ const StyledLink = styled(Link)`
 export default function Home() {
   return (
     <main className="p-8">
-      <Typography variant="h4" gutterBottom >
-        Hello Nakamoto!
+      <Typography variant="h6" gutterBottom >
+        Hello Satoshi!
       </Typography>
       <StyledLink href="/projects">Let's get started</StyledLink>
     </main>

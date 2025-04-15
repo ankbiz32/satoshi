@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import {
   Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogTitle
+  Paper, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogTitle,
+  Box
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -27,7 +28,8 @@ export default function ProjectListPage() {
   const toggleFav = useToggleFavorite();
 
   useEffect(() => {
-    dispatch(fetchProjects()).finally(() => setLoading(false));
+    dispatch(fetchProjects()).unwrap().catch((error) => 
+      dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" }))).finally(() => setLoading(false));
   }, [dispatch]);
 
   const handleDeleteClick = (projectId: string) => {
@@ -60,31 +62,28 @@ export default function ProjectListPage() {
 
   return (
     <main className="p-8">
-      <Typography variant="h4" gutterBottom>Project List</Typography>
-      <Button variant="contained" color="primary" component={Link} href="/projects/new">Create Project</Button>
+      <Box className="sm:flex justify-between">
+        <Typography variant="h6" gutterBottom>Project List</Typography>
+        <Button variant="contained" color="primary" component={Link} href="/projects/new">Create Project</Button>
+      </Box>
 
-      {loading ? <Typography>Loading projects...</Typography> : (
-        <TableContainer component={Paper} className="mt-4">
+      {loading ? <Typography sx={{ mt: "25px" }}>Loading projects...</Typography> : (
+        <TableContainer component={Paper} sx={{ mt: "25px" }}>
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Favourite</TableCell>
+              <TableRow sx={{ fontWeight: 800 }}>
                 <TableCell>Project ID</TableCell>
                 <TableCell>Project Name</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
                 <TableCell>Project Manager</TableCell>
+                <TableCell>Favorite</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {projects.map((project) => (
                 <TableRow key={project.projectId}>
-                  <TableCell>
-                    <IconButton onClick={() => toggleFav(project)}>
-                      {project.isFavourite ? <StarIcon color="warning" /> : <StarBorderIcon />}
-                    </IconButton>
-                  </TableCell>
                   <TableCell>
                     <Link href={`/projects/${project.projectId}`} className="text-blue-500">
                       {project.projectId}
@@ -95,12 +94,18 @@ export default function ProjectListPage() {
                   <TableCell>{project.endDate}</TableCell>
                   <TableCell>{project.projectManager}</TableCell>
                   <TableCell>
+                    <IconButton onClick={() => toggleFav(project)}>
+                      {project.isFavourite ? <StarIcon color="warning" /> : <StarBorderIcon />}
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
                     <Button
                       variant="outlined"
                       size="small"
                       startIcon={<EditIcon />}
                       component={Link}
                       href={`/projects/${project.projectId}/edit`}
+                      sx={{ mr: 2, mt: 1 }}
                     >
                       Edit
                     </Button>
@@ -110,7 +115,7 @@ export default function ProjectListPage() {
                       size="small"
                       startIcon={<DeleteIcon />}
                       onClick={() => handleDeleteClick(project.projectId)}
-                      sx={{ ml: 2 }}
+                      sx={{ mr: 2, mt: 1 }}
                     >
                       Delete
                     </Button>

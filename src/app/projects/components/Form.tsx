@@ -22,8 +22,8 @@ const ProjectSchema = Yup.object().shape({
 
 export default function ProjForm({ initialValues, onSubmit, isEdit = false }: ProjFormProps) {
   return (
-    <Box p={8}>
-      <Typography marginBottom={4} variant="h5" gutterBottom>{isEdit ? 'Update' : 'Create New' } Project</Typography>
+    <Box py={2} px={3} maxWidth={500}>
+      <Typography marginBottom={4} variant="h6" gutterBottom>{isEdit ? 'Update' : 'Create New'} Project</Typography>
       <Formik
         initialValues={initialValues}
         validationSchema={ProjectSchema}
@@ -34,6 +34,7 @@ export default function ProjForm({ initialValues, onSubmit, isEdit = false }: Pr
           <Form>
             <Stack spacing={3}>
               <Field
+                size="small"
                 as={TextField}
                 name="projectId"
                 label="Project ID"
@@ -43,6 +44,7 @@ export default function ProjForm({ initialValues, onSubmit, isEdit = false }: Pr
                 helperText={touched.projectId && errors.projectId}
               />
               <Field
+                size="small"
                 as={TextField}
                 name="projectName"
                 label="Project Name"
@@ -51,13 +53,16 @@ export default function ProjForm({ initialValues, onSubmit, isEdit = false }: Pr
                 helperText={touched.projectName && errors.projectName}
               />
               <Field
+                size="small"
                 as={TextField}
                 name="description"
                 label="Description"
                 fullWidth
                 multiline
+                rows={4}
               />
               <Field
+                size="small"
                 as={TextField}
                 name="startDate"
                 type="date"
@@ -68,6 +73,7 @@ export default function ProjForm({ initialValues, onSubmit, isEdit = false }: Pr
                 helperText={touched.startDate && errors.startDate}
               />
               <Field
+                size="small"
                 as={TextField}
                 name="endDate"
                 type="date"
@@ -78,6 +84,7 @@ export default function ProjForm({ initialValues, onSubmit, isEdit = false }: Pr
                 helperText={touched.endDate && errors.endDate}
               />
               <Field
+                size="small"
                 as={TextField}
                 name="projectManager"
                 label="Project Manager"
@@ -85,7 +92,7 @@ export default function ProjForm({ initialValues, onSubmit, isEdit = false }: Pr
                 error={touched.projectManager && !!errors.projectManager}
                 helperText={touched.projectManager && errors.projectManager}
               />
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" sx={{ alignSelf: 'flex-start', px:'50px', width: 'auto' }} variant="contained" color="primary">
                 {isEdit ? "Update" : "Create"}
               </Button>
             </Stack>

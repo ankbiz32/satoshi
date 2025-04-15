@@ -16,7 +16,9 @@ export default function FavoritesSidebar() {
   }, [dispatch]);
 
   return (
-    <Box width="250px" p={2} bgcolor="#f5f5f5" height="100vh">
+    <Box
+      className="bg-gray-100 p-4 sm:h-screen sm:max-h-screen max-h-60 overflow-y-auto min-w-3xs"
+    >
       <Typography variant="h6" gutterBottom>
         <StarIcon color="warning" /> Favorite Projects
       </Typography>

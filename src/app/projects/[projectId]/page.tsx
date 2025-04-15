@@ -39,27 +39,42 @@ export default function ProjectDetailPage() {
         }
     }
 
-    if (loading) return <Typography>Loading...</Typography>;
+    if (loading) return <Typography px={3} py={2}>Loading...</Typography>;
 
     return (
         <>
             {project &&
-                <Box p={8}>
+                <Box px={4} py={2} maxWidth={500}>
                     <Box display="flex" alignItems="center" gap={1}>
-                        <Typography variant="h4">{project.projectName}</Typography>
+                        <Typography variant="h6">{project.projectName}</Typography>
                         <IconButton onClick={() => toggleFav(project)}>
                             {project.isFavourite ? <StarIcon color="warning" /> : <StarBorderIcon />}
                         </IconButton>
                     </Box>
-                    <Typography variant="body1" mt={2}><strong>Project ID:</strong> {project.projectId}</Typography>
-                    <Typography variant="body1" mt={1}><strong>Description:</strong> {project.description}</Typography>
-                    <Typography variant="body1" mt={1}><strong>Start Date:</strong> {project.startDate}</Typography>
-                    <Typography variant="body1" mt={1}><strong>End Date:</strong> {project.endDate}</Typography>
-                    <Typography variant="body1" mt={1}><strong>Project Manager:</strong> {project.projectManager}</Typography>
+                    <Typography variant="body1" className="sm:flex-row flex-col flex justify-content-center" gap={2} mt={3}>
+                        <strong className='sm:text-right inline-block min-w-40'>Project ID:</strong>
+                        <span> {project.projectId}</span>
+                    </Typography>
+                    <Typography variant="body1" className="sm:flex-row flex-col flex justify-content-center" gap={2} mt={3}>
+                        <strong className='sm:text-right inline-block min-w-40'>Description:</strong>
+                        <span>{project.description}</span>
+                    </Typography>
+                    <Typography variant="body1" className="sm:flex-row flex-col flex justify-content-center" gap={2} mt={3}>
+                        <strong className='sm:text-right inline-block min-w-40'>Start Date:</strong>
+                        <span>{project.startDate}</span>
+                    </Typography>
+                    <Typography variant="body1" className="sm:flex-row flex-col flex justify-content-center" gap={2} mt={3}>
+                        <strong className='sm:text-right inline-block min-w-40'>End Date:</strong>
+                        <span>{project.endDate}</span>
+                    </Typography>
+                    <Typography variant="body1" className="sm:flex-row flex-col flex justify-content-center" gap={2} mt={3}>
+                        <strong className='sm:text-right inline-block min-w-40'>Project Manager:</strong>
+                        <span>{project.projectManager}</span>
+                    </Typography>
 
                     <Box mt={4}>
                         <Button variant="contained" onClick={() => router.back()} className="mr-2">Back</Button>
-                        <Button variant="outlined" sx={{ml: 2}} href={`/projects/${project.projectId}/edit`}>Edit</Button>
+                        <Button variant="outlined" sx={{ ml: 2 }} href={`/projects/${project.projectId}/edit`}>Edit</Button>
                     </Box>
                 </Box>
             }

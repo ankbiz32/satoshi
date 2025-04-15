@@ -13,7 +13,7 @@ export const fetchProjects = createAsyncThunk(
             const res = await fetch('/api/projects');
             if (!res.ok) {
                 const errorData = await res.json();
-                return rejectWithValue(errorData.message || 'Failed to fetch projects');
+                return rejectWithValue(errorData.error || errorData.message || "Unknown error");
             }
             return await res.json();
         } catch (error: any) {

@@ -36,18 +36,26 @@ export default function EditProjectPage() {
   }
 
   const handleSubmit = async (values: IProject) => {
-    const res = await fetch("/api/projects", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
+    try {
+      const res = await fetch("/api/projects", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
 
-    if (res.ok) {
+      if (!res.ok) {
+        const err = await res.json();
+        dispatch(showSnackbar({ message: err?.error || "Server error", severity: "error" }))
+        return;
+      }
       router.push("/projects");
+    } catch (error) {
+      console.error("Fetch error:", error);
+      dispatch(showSnackbar({ message: error as string, severity: "error" }))
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="p-4">Loading...</div>;
 
   if (project) return <ProjectForm initialValues={project} onSubmit={handleSubmit} isEdit={true} />;
 }

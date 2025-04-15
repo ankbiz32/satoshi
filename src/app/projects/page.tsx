@@ -49,12 +49,16 @@ export default function ProjectListPage() {
       const res = await fetch(`/api/projects?projectId=${projectToDelete}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete project");
+      if (!res.ok) {
+        const err = await res.json();
+        dispatch(showSnackbar({ message: err?.error || "Server error", severity: "error" }))
+        return;
+      };
 
       dispatch(showSnackbar({ message: "Deleted!", severity: "success" }));
       dispatch(fetchProjects()).unwrap()
-      .catch((error) =>
-        dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
+        .catch((error) =>
+          dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
     } catch (error) {
       console.error("Delete error:", error);
       dispatch(showSnackbar({ message: error as string, severity: "error" }));

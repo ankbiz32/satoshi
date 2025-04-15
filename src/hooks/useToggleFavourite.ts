@@ -15,12 +15,16 @@ export const useToggleFavorite = () => {
         body: JSON.stringify({ ...project, isFavourite: !project.isFavourite }),
       });
 
-      if (!res.ok) throw new Error("Failed to update project");
+      if (!res.ok) {
+        const err = await res.json();
+        dispatch(showSnackbar({ message: err?.error || "Server error", severity: "error" }))
+        return;
+      };
 
       dispatch(showSnackbar({ message: "Updated!", severity: "success" }));
       dispatch(fetchProjects()).unwrap()
-      .catch((error) =>
-        dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
+        .catch((error) =>
+          dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
     } catch (error) {
       console.error("Update error:", error);
       dispatch(showSnackbar({ message: error as string, severity: "error" }));

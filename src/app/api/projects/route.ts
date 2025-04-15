@@ -63,7 +63,7 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const fail = Math.random() < 0.9; // 20% chances of mocking failure
+  const fail = Math.random() < 0.3; // 20% chances of mocking failure
 
   if (fail) {
     return NextResponse.json({ error: 'Simulated Server Error in PUT' }, { status: 500 });

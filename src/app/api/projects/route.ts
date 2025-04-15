@@ -27,17 +27,20 @@ function delay(ms: number) {
 }
 
 export async function GET() {
-  
+  await delay(1500);
+  return NextResponse.json(mockProjects);
+}
+
+export async function POST(req: Request) {
+
   const fail = Math.random() < 0.2; // 20% chances of mocking failure
 
   if (fail) {
     return NextResponse.json({ error: 'Simulated Server Error in GET. Please refresh' }, { status: 500 });
   }
 
-  return NextResponse.json(mockProjects);
-}
+  await delay(2000);
 
-export async function POST(req: Request) {
   try {
     const body = await req.json();
 
@@ -60,6 +63,12 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
+  const fail = Math.random() < 0.2; // 20% chances of mocking failure
+
+  if (fail) {
+    return NextResponse.json({ error: 'Simulated Server Error in GET. Please refresh' }, { status: 500 });
+  }
+
   try {
     const body = await req.json();
     const index = mockProjects.findIndex(p => p.projectId === body.projectId);
@@ -80,6 +89,12 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const fail = Math.random() < 0.2; // 20% chances of mocking failure
+
+  if (fail) {
+    return NextResponse.json({ error: 'Simulated Server Error in GET. Please refresh' }, { status: 500 });
+  }
+  
   try {
     const projectId = req.nextUrl.searchParams.get('projectId');
 

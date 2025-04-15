@@ -32,7 +32,7 @@ export default function ProjectListPage() {
       .catch((error) =>
         dispatch(showSnackbar({ message: error || "Unknown Error", severity: "error" })))
       .finally(() => setLoading(false));
-  }, []);
+  }, [dispatch]);
 
   const handleDeleteClick = (projectId: string) => {
     setProjectToDelete(projectId);

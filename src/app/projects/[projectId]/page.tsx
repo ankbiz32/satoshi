@@ -15,7 +15,7 @@ import { selectAllProjects } from '@/store/slices/projectsSlice';
 export default function ProjectDetailPage() {
     const { projectId } = useParams();
     const router = useRouter();
-    const [loading, setLoading] = useState<Boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
     const [project, setProject] = useState<IProject | null>(null);
     const toggleFav = useToggleFavorite();
     const dispatch = useDispatch<AppDispatch>();
@@ -29,7 +29,13 @@ export default function ProjectDetailPage() {
     const fetchData = async () => {
         try {
             const found = projects.find((p: IProject) => p.projectId === projectId);
-            found ? setProject(found) : dispatch(showSnackbar({ message: 'No project found with this Id', severity: "error" }));
+
+            if (found) {
+                setProject(found)
+            }
+            else {
+                dispatch(showSnackbar({ message: 'No project found with this Id', severity: "error" }))
+            };
 
         } catch (error) {
             console.error("Fetch error:", error);

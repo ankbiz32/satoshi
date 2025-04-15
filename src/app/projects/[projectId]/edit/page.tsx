@@ -12,7 +12,7 @@ import { AppDispatch } from "@/store";
 export default function EditProjectPage() {
   const router = useRouter();
   const { projectId } = useParams() as { projectId: string };
-  const [loading, setLoading] = useState<Boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [project, setProject] = useState<IProject | null>(null);
   const projects = useSelector(selectAllProjects);
   const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +25,12 @@ export default function EditProjectPage() {
   const fetchData = async () => {
     try {
       const found = projects.find((p: IProject) => p.projectId === projectId);
-      found ? setProject(found) : dispatch(showSnackbar({ message: 'No project found with this Id', severity: "error" }));
+      if (found) {
+        setProject(found)
+      }
+      else {
+        dispatch(showSnackbar({ message: 'No project found with this Id', severity: "error" }))
+      };
 
     } catch (error) {
       console.error("Fetch error:", error);

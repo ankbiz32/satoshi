@@ -22,7 +22,7 @@ export default function Home() {
       <Typography variant="h6" gutterBottom >
         Hello Satoshi!
       </Typography>
-      <StyledLink href="/projects">Let's get started</StyledLink>
+      <StyledLink href="/projects">Lets get started</StyledLink>
     </main>
   );
 }

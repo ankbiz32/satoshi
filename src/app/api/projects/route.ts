@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { IProject } from '@/types/Project';
 
-let mockProjects: IProject[] = [
+const mockProjects: IProject[] = [
   {
     projectId: 'p_032',
     projectName: 'IGI - I\'m Going in',
@@ -94,7 +94,7 @@ export async function DELETE(req: NextRequest) {
   if (fail) {
     return NextResponse.json({ error: 'Simulated Server Error in GET. Please refresh' }, { status: 500 });
   }
-  
+
   try {
     const projectId = req.nextUrl.searchParams.get('projectId');
 

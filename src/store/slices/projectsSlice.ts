@@ -8,7 +8,7 @@ export const selectFavoriteProjects = (state: RootState) =>
 
 export const fetchProjects = createAsyncThunk(
     'projects/fetchProjects',
-    async (_, { rejectWithValue }) => {
+    async (_, { rejectWithValue }): Promise<IProject[] | ReturnType<typeof rejectWithValue>> => {
         try {
             const res = await fetch('/api/projects');
             if (!res.ok) {
@@ -16,8 +16,11 @@ export const fetchProjects = createAsyncThunk(
                 return rejectWithValue(errorData.error || errorData.message || "Unknown error");
             }
             return await res.json();
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'An unexpected error occurred');
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                return rejectWithValue(error.message);
+            }
+            return rejectWithValue('An unexpected error occurred');
         }
     }
 );
@@ -53,8 +56,8 @@ const projectsSlice = createSlice({
 
 export const { setProjects } = projectsSlice.actions;
 
-export const selectAllProjects = (state: any) => state.projects.all;
-export const selectFavouriteProjects = (state: any) =>
+export const selectAllProjects = (state: RootState) => state.projects.all;
+export const selectFavouriteProjects = (state: RootState) =>
     state.projects.all.filter((project: IProject) => project.isFavourite);
 
 export default projectsSlice.reducer;

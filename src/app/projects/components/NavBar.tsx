@@ -14,11 +14,9 @@ import {
   ListItemText,
   Box,
   useMediaQuery,
-  colors,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { styled, useTheme } from "@mui/material/styles";
-import { css } from '@emotion/react';
 
 const navLinks = [
   { title: "Projects", path: "/projects" },
